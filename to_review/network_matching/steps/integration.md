@@ -28,5 +28,5 @@ INSERT INTO <table>_w SELECT * FROM validation.<cc1>_<cc2>_<table>_w_to_correct;
 ##### 4) Run the integration command line
 This action will integrate the data from the work table into the original table.
 ```
-python3 script/integrate.py -c conf.json -T <theme> -t <table> -s 10
+python3 script/integrate.py -c conf.json -T <theme> -t <table>
 ```

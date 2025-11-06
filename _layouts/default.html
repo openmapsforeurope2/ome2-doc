@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>{{ page.title | default: site.title }}</title>
+  <link rel="stylesheet" href="{{ '/assets/styles.css' | relative_url }}">
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="{{ site.baseurl | relative_url }}">{{ site.title }}</a>
+    <!-- top navigation for small screens -->
+    <nav class="site-nav" aria-label="Main navigation">
+      <ul>
+        {% for item in site.data.navigation %}
+        <li><a href="{{ item.url | relative_url }}">{{ item.title }}</a></li>
+        {% endfor %}
+      </ul>
+    </nav>
+  </header>
+  <div class="page-wrap">
+    <aside class="sidebar" role="complementary" aria-label="Sidebar navigation">
+      {% include sidebar.html %}
+    </aside>
+    <main class="content" role="main">
+      {{ content }}
+    </main>
+  </div>
+  <footer class="site-footer">
+    <p>&copy; {{ site.time | date: "%Y" }} OpenMapsForEurope</p>
+  </footer>
+</body>
+</html>

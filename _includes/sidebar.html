@@ -1,0 +1,22 @@
+<nav class="sidebar-nav">
+  <ul>
+    {% assign nav_items = include.items | default: site.data.navigation %}
+    {% for item in nav_items %}
+      {% assign full_url = item.url | relative_url %}
+      {% assign is_active = false %}
+      {% if page.url == full_url or page.url contains full_url %}
+        {% assign is_active = true %}
+      {% endif %}
+      <li class="{% if is_active %}active{% endif %}{% if item.children %} has-children{% endif %}">
+        <div class="menu-header">
+          <a href="{{ full_url }}">{{ item.title }}</a>
+        </div>
+        {% if item.children %}
+          <ul class="submenu">
+            {% include sidebar.html items=item.children %}
+          </ul>
+        {% endif %}
+      </li>
+    {% endfor %}
+  </ul>
+</nav>
