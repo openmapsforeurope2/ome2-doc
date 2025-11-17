@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>OBSOLETE</title>
+  <link rel="stylesheet" href="/assets/styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="">OME2 Documentation</a>
+
+    <!-- top navigation (kept for small screens) -->
+    <nav class="site-nav" aria-label="Main navigation">
+      <ul>
+        
+        <li><a href="/ome2-doc">Home</a></li>
+        
+        <li><a href="/docs/getting-started/">Getting started</a></li>
+        
+        <li><a href="/docs/reference/">Reference</a></li>
+        
+        <li><a href="/docs/api/">API</a></li>
+        
+        <li><a href="/contribute/">Contribute</a></li>
+        
+        <li><a href="/ome2-doc/docs/user_guide.md">User guide</a></li>
+        
+      </ul>
+    </nav>
+  </header>
+
+  <div class="page-wrap">
+    <aside class="sidebar" role="complementary" aria-label="Sidebar navigation">
+      <nav class="sidebar-nav">
+  <ul>
+    
+      
+      
+      
+      <li class="">
+        <a href="/ome2-doc">Home</a>
+      </li>
+    
+      
+      
+      
+      <li class="">
+        <a href="/docs/getting-started/">Getting started</a>
+      </li>
+    
+      
+      
+      
+      <li class="">
+        <a href="/docs/reference/">Reference</a>
+      </li>
+    
+      
+      
+      
+      <li class="">
+        <a href="/docs/api/">API</a>
+      </li>
+    
+      
+      
+      
+      <li class="">
+        <a href="/contribute/">Contribute</a>
+      </li>
+    
+      
+      
+      
+      <li class="">
+        <a href="/ome2-doc/docs/user_guide.md">User guide</a>
+      </li>
+    
+  </ul>
+</nav>
+
+    </aside>
+
+    <main class="content" role="main">
+      <article class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">OBSOLETE</h1>
+  </header>
+
+  <div class="post-content">
+    <h1 id="obsolete">OBSOLETE</h1>
+
+<h1 id="how-to-fill-a-json-configuration-file-for-the-model-conversion-tool">How to fill a json configuration file for the model conversion tool?</h1>
+
+<h3 id="general-parameters">General parameters</h3>
+<p>The first step consists in filling the general parameters of the transformation:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    "country_code": "fi",
+    "source_srid": "3067",
+    "target_srid": "3035",
+    "target_country_field": "country",
+</code></pre></div></div>
+
+<ul>
+  <li>country_code refers to the one used in the configuration file name, which is usually the “main” country code of the country to be processed. If the dataset contains several country codes (e.g. France and its overseas territories), please see below how to proceed.</li>
+  <li>source_srid refers to the EPSG number of the Spatial Reference Identifier (SRID) or coordinate system used in the source tables provided by the country. It can usually be determined in pgAdmin with a simple SQL query:
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>SELECT Find_SRID('&lt;schema name&gt;','&lt;table name&gt;','&lt;geometry column name&gt;');
+</code></pre></div>    </div>
+    <p>If the query does not work, it is possible to open the table in QGIS and check which SRID is detected.</p>
+  </li>
+  <li>target_srid refers to the coordinate reference system of the OME2 database. It is set to 3035 and must not be modified.</li>
+  <li>target_country_field indicates which field is used to store country codes in the OME2 database. It must not be modified.</li>
+</ul>
+
+<h5 id="particular-case-dataset-with-several-country-codes-and-srids">Particular case: dataset with several country codes and SRIDs</h5>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    "country_code": "fr",
+    "country_code_list": ["fr","gf","gu","gp","mq","re","yt","bl","mf","pm"],
+    "source_srid": "CASE gcms_territoire WHEN 'FXX' THEN 2154 WHEN 'GLP' THEN 4559 WHEN 'GUF' THEN 2972 WHEN 'H_T' THEN 4326 WHEN 'MTQ' THEN 4559 WHEN 'MYT' THEN 4471 WHEN 'REU' THEN 2975 WHEN 'SPM' THEN 4467 END",
+    "target_srid": "3035",
+    "target_country_field": "country",
+</code></pre></div></div>
+
+  </div>
+
+</article>
+
+    </main>
+  </div>
+
+  <footer class="site-footer">
+    <p>&copy; 2025 OpenMapsForEurope</p>
+  </footer>
+</body>
+</html>
