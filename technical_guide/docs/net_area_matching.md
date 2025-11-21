@@ -14,7 +14,7 @@ Installing the application requires compiling internal and external libraries, i
 
 Here is the dependency graph:
 
-<img width="596" height="593" alt="image" src="https://github.com/user-attachments/assets/fa02cce1-75c0-4546-9b14-88ac96516e04" />
+<img width="596" height="593" alt="image" src="https://github.com/openmapsforeurope2/net_area_matching/blob/main/docs/images/dependencies.png" />
 
 ### IGN Socle 
 
