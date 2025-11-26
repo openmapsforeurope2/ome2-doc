@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>integration</title>
+  <link rel="stylesheet" href="/assets/styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="">OME2 Documentation</a>
+
+    <!-- top navigation (kept for small screens) -->
+    <nav class="site-nav" aria-label="Main navigation">
+      <ul>
+        
+        <li><a href="/ome2-doc">Home</a></li>
+        
+        <li><a href="/docs/getting-started/">Getting started</a></li>
+        
+        <li><a href="/docs/reference/">Reference</a></li>
+        
+        <li><a href="/docs/api/">API</a></li>
+        
+        <li><a href="/contribute/">Contribute</a></li>
+        
+        <li><a href="/ome2-doc/docs/user_guide.md">User guide</a></li>
+        
+      </ul>
+    </nav>
+  </header>
+
+  <div class="page-wrap">
+    <aside class="sidebar" role="complementary" aria-label="Sidebar navigation">
+      <nav class="sidebar-nav">
+  <ul>
+    
+      
+      
+      
+      <li class="">
+        <a href="/ome2-doc">Home</a>
+      </li>
+    
+      
+      
+      
+      <li class="">
+        <a href="/docs/getting-started/">Getting started</a>
+      </li>
+    
+      
+      
+      
+      <li class="">
+        <a href="/docs/reference/">Reference</a>
+      </li>
+    
+      
+      
+      
+      <li class="">
+        <a href="/docs/api/">API</a>
+      </li>
+    
+      
+      
+      
+      <li class="">
+        <a href="/contribute/">Contribute</a>
+      </li>
+    
+      
+      
+      
+      <li class="">
+        <a href="/ome2-doc/docs/user_guide.md">User guide</a>
+      </li>
+    
+  </ul>
+</nav>
+
+    </aside>
+
+    <main class="content" role="main">
+      <article class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">integration</h1>
+  </header>
+
+  <div class="post-content">
+    <h3 id="integration">integration</h3>
+
+<h4 id="general-command-line">General command line:</h4>
+<p>The integration command line will integrate the data from the work table (e.g. road_link_w) into the original table (e.g. road_link).</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>python3 script/integrate.py -c conf.json -T &lt;theme&gt; -t &lt;table&gt; -s 10
+</code></pre></div></div>
+
+<h4 id="integration-after-manual-corrections">Integration after manual corrections</h4>
+
+<p>If a manal correction step has occurred before integration (for instance after the edge-matching process), it is usually done on a copy of the work table located in the “validation” schema of the database. Additional steps need to be followed to integrate the data at the end of the process:</p>
+
+<h5 id="1-extract-the-original-data-again">1) Extract the original data again</h5>
+<p>The original data needs to be extracted again with the same parameters as those used to extract it for the edge-matching process. This will fill the ids table (e.g. road_link_w_ids) which is used to detect deleted, created and modified objects.</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>python3 script/border_extract.py -c conf.json -T &lt;theme&gt; -t &lt;table&gt; -d &lt;distance&gt; &lt;cc1&gt; &lt;cc2&gt; 
+</code></pre></div></div>
+<h5 id="2-empty-the-work-table">2) Empty the work table</h5>
+<p>This can be done with a SQL query: this action will empty the work table but keep the ids table correctly filled.</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>DELETE FROM &lt;table&gt;_w; 
+</code></pre></div></div>
+<h5 id="3-fill-the-work-table-with-the-corrected-data">3) Fill the work table with the corrected data</h5>
+<p>A SQL query is used to upload the data which was corrected manually into the work table, in order to launch the integration command in the next step.</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>INSERT INTO &lt;table&gt;_w SELECT * FROM validation.&lt;cc1&gt;_&lt;cc2&gt;_&lt;table&gt;_w_to_correct;
+</code></pre></div></div>
+<h5 id="4-run-the-integration-command-line">4) Run the integration command line</h5>
+<p>This action will integrate the data from the work table into the original table.</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>python3 script/integrate.py -c conf.json -T &lt;theme&gt; -t &lt;table&gt;
+</code></pre></div></div>
+
+  </div>
+
+</article>
+
+    </main>
+  </div>
+
+  <footer class="site-footer">
+    <p>&copy; 2025 OpenMapsForEurope</p>
+  </footer>
+</body>
+</html>

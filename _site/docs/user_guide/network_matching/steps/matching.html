@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Matching</title>
+  <link rel="stylesheet" href="/assets/styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="">OME2 Documentation</a>
+
+    <!-- top navigation (kept for small screens) -->
+    <nav class="site-nav" aria-label="Main navigation">
+      <ul>
+        
+        <li><a href="/ome2-doc">Home</a></li>
+        
+        <li><a href="/docs/getting-started/">Getting started</a></li>
+        
+        <li><a href="/docs/reference/">Reference</a></li>
+        
+        <li><a href="/docs/api/">API</a></li>
+        
+        <li><a href="/contribute/">Contribute</a></li>
+        
+        <li><a href="/ome2-doc/docs/user_guide.md">User guide</a></li>
+        
+      </ul>
+    </nav>
+  </header>
+
+  <div class="page-wrap">
+    <aside class="sidebar" role="complementary" aria-label="Sidebar navigation">
+      <nav class="sidebar-nav">
+  <ul>
+    
+      
+      
+      
+      <li class="">
+        <a href="/ome2-doc">Home</a>
+      </li>
+    
+      
+      
+      
+      <li class="">
+        <a href="/docs/getting-started/">Getting started</a>
+      </li>
+    
+      
+      
+      
+      <li class="">
+        <a href="/docs/reference/">Reference</a>
+      </li>
+    
+      
+      
+      
+      <li class="">
+        <a href="/docs/api/">API</a>
+      </li>
+    
+      
+      
+      
+      <li class="">
+        <a href="/contribute/">Contribute</a>
+      </li>
+    
+      
+      
+      
+      <li class="">
+        <a href="/ome2-doc/docs/user_guide.md">User guide</a>
+      </li>
+    
+  </ul>
+</nav>
+
+    </aside>
+
+    <main class="content" role="main">
+      <article class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">Matching</h1>
+  </header>
+
+  <div class="post-content">
+    <h1 id="matching">Matching</h1>
+
+<h2 id="hydrography-theme-hy">Hydrography theme (HY)</h2>
+
+<h3 id="data-preparation">Data preparation</h3>
+
+<p>Tool : data-tools</p>
+
+<p>Edit configuration file :</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>"db_conf_file":&lt;db_conf_file_name&gt;.json,
+</code></pre></div></div>
+
+<p>Run preparation process :</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>python3 prepare_data.py -c path/to/conf.json -T hy -s &lt;suffix&gt; -m &lt;country_code&gt; &lt;country_code&gt;
+</code></pre></div></div>
+
+<p>Create tables:</p>
+<ul>
+  <li>watercourse_area_w_<country_code>_<country_code>_<suffix></suffix></country_code></country_code></li>
+  <li>standing_water_w_<country_code>_<country_code>_<suffix></suffix></country_code></country_code></li>
+  <li>watercourse_link_w_<country_code>_<country_code>_<suffix></suffix></country_code></country_code></li>
+</ul>
+
+<h3 id="area-matching">Area Matching</h3>
+
+<p>Tool : area_matching</p>
+
+<p>Edit configuration file theme_parameters.ini :</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>AREA_TABLE_INIT                       =watercourse_area_w_&lt;country_code&gt;_&lt;country_code&gt;_&lt;suffix&gt;
+AREA_TABLE_INIT_STANDING_WATER        =standing_water_w_&lt;country_code&gt;_&lt;country_code&gt;_&lt;suffix&gt;
+</code></pre></div></div>
+
+<p>Add specific border configuration if it does not exist:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[&lt;country_code&gt;#&lt;country_code&gt;]
+COUNTRY_CODE_W                        =&lt;country_code&gt;#&lt;country_code&gt;
+</code></pre></div></div>
+
+<p>Specify additional parameters in this section if necessary</p>
+
+<p>Run matching process :</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>area_matching --c path/to/epg_parameters.ini --cc &lt;country_code&gt;#&lt;country_code&gt;
+</code></pre></div></div>
+
+<h3 id="network-matching">Network Matching</h3>
+
+<p>Tool : net_matching</p>
+
+<p>Edit configuration file hy_theme_parameters.ini :</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>EDGE_TABLE_INIT                           =watercourse_link_w_&lt;country_code&gt;_&lt;country_code&gt;_&lt;suffix&gt;
+WATERCOURSE_AREA_TABLE                    =_399_watercourse_area_w_&lt;country_code&gt;_&lt;country_code&gt;_&lt;suffix&gt;
+STANDING_WATER_TABLE                      =_399_standing_water_w_&lt;country_code&gt;_&lt;country_code&gt;_&lt;suffix&gt;
+</code></pre></div></div>
+
+<p>Add specific border configuration if it does not exist:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[&lt;country_code&gt;#&lt;country_code&gt;]
+COUNTRY_CODE_W                        =&lt;country_code&gt;#&lt;country_code&gt;
+</code></pre></div></div>
+
+<p>Specify additional parameters in this section if necessary</p>
+
+<p>Run matching process :</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>net_matching --c path/to/epg_parameters.ini --T hy --cc &lt;country_code&gt;#&lt;country_code&gt;
+</code></pre></div></div>
+
+<h3 id="prepare-data-for-validation">Prepare data for validation</h3>
+
+<p>Tool : data-tools</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>python3 prepare_data.py -c path/to/conf.json -T hy -s &lt;suffix&gt; -w &lt;country_code&gt; &lt;country_code&gt;
+</code></pre></div></div>
+
+<h3 id="integrate-data-after-validation-data-for-validation">Integrate data after validation data for validation</h3>
+
+<p>Tool : data-tools</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>python3 integrate_from_validation.py -c path/to/conf.json -T hy &lt;country_code&gt; &lt;country_code&gt;
+</code></pre></div></div>
+
+  </div>
+
+</article>
+
+    </main>
+  </div>
+
+  <footer class="site-footer">
+    <p>&copy; 2025 OpenMapsForEurope</p>
+  </footer>
+</body>
+</html>

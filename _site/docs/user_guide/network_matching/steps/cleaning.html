@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Cleaning step</title>
+  <link rel="stylesheet" href="/assets/styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="">OME2 Documentation</a>
+
+    <!-- top navigation (kept for small screens) -->
+    <nav class="site-nav" aria-label="Main navigation">
+      <ul>
+        
+        <li><a href="/ome2-doc">Home</a></li>
+        
+        <li><a href="/docs/getting-started/">Getting started</a></li>
+        
+        <li><a href="/docs/reference/">Reference</a></li>
+        
+        <li><a href="/docs/api/">API</a></li>
+        
+        <li><a href="/contribute/">Contribute</a></li>
+        
+        <li><a href="/ome2-doc/docs/user_guide.md">User guide</a></li>
+        
+      </ul>
+    </nav>
+  </header>
+
+  <div class="page-wrap">
+    <aside class="sidebar" role="complementary" aria-label="Sidebar navigation">
+      <nav class="sidebar-nav">
+  <ul>
+    
+      
+      
+      
+      <li class="">
+        <a href="/ome2-doc">Home</a>
+      </li>
+    
+      
+      
+      
+      <li class="">
+        <a href="/docs/getting-started/">Getting started</a>
+      </li>
+    
+      
+      
+      
+      <li class="">
+        <a href="/docs/reference/">Reference</a>
+      </li>
+    
+      
+      
+      
+      <li class="">
+        <a href="/docs/api/">API</a>
+      </li>
+    
+      
+      
+      
+      <li class="">
+        <a href="/contribute/">Contribute</a>
+      </li>
+    
+      
+      
+      
+      <li class="">
+        <a href="/ome2-doc/docs/user_guide.md">User guide</a>
+      </li>
+    
+  </ul>
+</nav>
+
+    </aside>
+
+    <main class="content" role="main">
+      <article class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">Cleaning step</h1>
+  </header>
+
+  <div class="post-content">
+    
+<h1 id="cleaning-step">Cleaning step</h1>
+
+<p>The “cleaning” step consists in deleting objects located outside of the country’s extent and more than a certain distance away from its international boundaries. The default distance used is 5 meters.</p>
+
+<p>This means that in OME2, we consider that objects provided by a country and located less than 5 meters away from the international boundary (even if they are in the neighbouring country’s extent) can be kept. Objects located in the neighbouring country and more than 5 meters away from the international boundary are deleted by the cleaning step.</p>
+
+<p>The cleaning step needs to be applied once new data has been integrated in the OME2 database and once the OME2 version of its international boundaries have been defined.</p>
+
+<p>The cleaning step works like most steps in the OME2 process. At first, the data to be processed is stored in the “official” table (e.g. tn.road_link). The cleaning step is divided into 3 sub-steps:</p>
+<ul>
+  <li>Sub-step 1: the relevant data is extracted in the corresponding working table (e.g. road_link_w). To do that, an extract distance needs to be defined (see below).</li>
+  <li>Sub-step  2: the cleaning tool is applied to the working table (e.g. road_link_w) -&gt; the objects located in the wrong country and more than 5 meters away from the boundary are deleted.</li>
+  <li>Sub-step  3: the result is integrated in the original table (e.g. tn.road_link).</li>
+</ul>
+
+<p>A single command line enables to perform the three sub-steps.</p>
+
+<h2 id="define-the-parameters">Define the parameters</h2>
+<p>The cleaning tool needs two parameters: the extract distance and the cleaning distance.</p>
+
+<h4 id="extract-distance">Extract distance</h4>
+<p>The extract distance corresponds of the size of the buffer which will be created around the international boundary to extract the data for cleaning. It needs to be as small as possible in order to extract as little data as possible (so that the tool can run more efficiently) but large enough to contain all the objects located in the wrong country which need to be deleted.</p>
+
+<p>To determine the extract distance, you can open the data in QGIS and approximately measure the distance between the international boundaries and the farthest objects. The extract distance parameter should be slightly higher than the distance measured in QGIS.</p>
+
+<p><img src="https://github.com/openmapsforeurope2/OME2/blob/main/docs/images/Extract_distance_QGIS.png" alt="Extract_distance_QGIS" /></p>
+
+<p>In the example above, the distance measured between the boundary and the farthest objects is ~17308 meters. To be safe, an extract distance of 20000 meters can be used.</p>
+
+<p>Once the extracting distance has been decided, it needs to be indicated in the <a href="https://github.com/openmapsforeurope2/data-tools/blob/main/config/conf.json">configuration file</a> used by the cleaning tool:</p>
+<ul>
+  <li>if it is the same as the default value, it does not need to be added.</li>
+  <li>if it is different from the default value, it needs to be added in the “extraction_distance” section corresponding to the theme to be processed (hy or tn).
+<img width="567" height="480" alt="image" src="https://github.com/user-attachments/assets/3dcdc887-2228-4b13-bc26-ac019a3bb45e" /></li>
+</ul>
+
+<h4 id="cleaning-distance">Cleaning distance</h4>
+<p>The default value for the cleaning distance is 5 meters. This value was chosen empirically while testing the edge-matching process. 
+There has been no reason to use a different value so far.</p>
+
+<p>It is however possible to modify the cleaning distance in the <a href="https://github.com/openmapsforeurope2/data-tools/blob/main/config/conf.json">configuration file</a>:
+<img width="505" height="480" alt="image" src="https://github.com/user-attachments/assets/935d1705-e3c0-47f4-a215-980de8e06200" /></p>
+
+<p>Please note that the new cleaning distance will be applied to all themes and countries.</p>
+
+<h2 id="run-the-command-line">Run the command line</h2>
+
+<p>Ex 1: clean French road_link on the boundaries with be and lu</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>python3 script/clean.py -c path/to/conf.json -b lu -b be -T tn -t road_link fr
+</code></pre></div></div>
+
+<p>Ex 2: clean the French tn theme (all tables) on all of France’s international boundaries</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>python3 script/clean.py -c path/to/conf.json -a -T tn fr
+</code></pre></div></div>
+
+<p>The full documentation for the clean tool is accessible <a href="https://github.com/openmapsforeurope2/data-tools/tree/main">here</a>.</p>
+
+<p>/!\ OBSOLETE
+The command lines and parameters used during the production of the HVLSP 2.0 and 3.0 can be found in the <a href="https://github.com/openmapsforeurope2/data-tools/blob/main/use_case/clean_hy_tn.sh">clean_hy_tn.sh</a> file in the data-tools/use_case repository.</p>
+
+
+  </div>
+
+</article>
+
+    </main>
+  </div>
+
+  <footer class="site-footer">
+    <p>&copy; 2025 OpenMapsForEurope</p>
+  </footer>
+</body>
+</html>
