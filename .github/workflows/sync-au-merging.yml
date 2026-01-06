@@ -33,5 +33,5 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add technical_guide/docs/au_merging.md
-          git diff --cached --quiet || git commit -m "Sync au_matching documentation from au_merging/docs/developer-guide-en.md"
+          git diff --cached --quiet || git commit -m "Sync au_merging documentation from au_merging/docs/developer-guide-en.md"
           git push
