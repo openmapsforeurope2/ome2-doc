@@ -7,8 +7,8 @@ The **data-model-transformer** tool, also known as "Harmonization tool", aims at
    <img width="681" height="331" alt="image" src="https://github.com/user-attachments/assets/3e0d3b91-c02f-4e9a-88be-93b6f3b8a3d0" />
 </p>
 
-## 1. Main characteristics of the tool
-### 1.1. Repository structure
+## Main characteristics of the tool
+### Repository structure
 The source code repository contains the following folders:
 - config: JSON configuration files used by the tool (see §3.2.2);
 - docker: dockerfile and build script for reproducible setup;
@@ -16,17 +16,17 @@ The source code repository contains the following folders:
 - script: orchestrating script and additional script, which constitute the tool.
 Additional files such as README, VERSION, LICENSE, CHANGELOG are also included.
 
-### 1.2. License
+### License
 The Harmonization tool is distributed under the MIT license.
 
-### 1.3. Technical characteristics
+### Technical characteristics
 The Harmonization tool has been developed with Python 3.11. It uses standard Python libraries to handle PostGIS databases.
 The Harmonization tool may be run from Windows or Linux environments.
 
-### 1.4. Deployment
+### Deployment
 The Harmonization tool is deployed on a Cloud infrastructure hosted by OVH-Cloud, which is often referred to as the “OME2 production platform”. This infrastructure was set into place and is maintained by IGN-France. Its access is restricted to a list of authorized IP addresses for security reasons.
 
-### 1.5. Running the tool
+### Running the tool
 The Harmonization tool may be run from the OME2 production platform where a simple Jenkins interface is available to the OME2 producers. The interface enables the producer to specify a number of parameters:
 -	The name of the source national database (a PostGIS database stored on the production platform);
 -	The source PostGIS schema name in the national database;
@@ -39,13 +39,12 @@ The Harmonization tool may be run from the OME2 production platform where a simp
 </p>
 Once the parameters are filled, the tool can be run by clicking on the “Build” button.
 
-### 1.6. Demonstration
+### Demonstration
 A video which demonstrates how to use the tool and its results is available via the following [link](https://github.com/openmapsforeurope2/tools_demo/tree/main/D5.1_Harmonization_tool). 
 
 
-## 2. Tool description
-### 2.1. Input
-
+## Tool description
+### Input
 #### PostGIS national database
 The Harmonization tool uses as input a national PostGIS database. 
 During the OME2 project, national producers provided their data in varying formats: GeoPackage, gml, SQL dump, Shapefile, Geodatabase. It was up to the WP4 team to first upload these datasets on the OME2 PostGIS server, hosted on the production platform. Several methodologies and software solutions were used, depending on the data provided (FME, SQL restore…).
@@ -53,6 +52,7 @@ On the production platform, a PostGIS database was created for each country, wit
 <p align="center">
    <img width="172" height="183" alt="image" src="https://github.com/user-attachments/assets/a5fbc6bd-fd30-4885-a619-232e0c57f3c8" />
 </p>
+
 #### Configuration files
 The Harmonization tool also needs “configuration files” to run. These are JSON files which describe how to transform the national data model into the HVLSP data model. They are based on mapping tables (Excel spreadsheet) which are filled by national producers to explain which tables, attributes and values from their datasets should be used to fill the HVLSP information.
 <p align="center">
@@ -71,7 +71,7 @@ There is one JSON configuration per country and per theme. A naming convention i
 For example, if COUNTRY = ‘be’ and THEME = ‘hy’, the configuration file will be “be-hy.json”.
 The configuration files, implemented for the 10 countries already included in the prototype, are stored in the repository’ [config](https://github.com/openmapsforeurope2/data-model-transformer/tree/main/config) folder. The functions which were implemented are stored in the [functions](https://github.com/openmapsforeurope2/data-model-transformer/tree/main/functions) folder.
 
-### 2.2. Key features
+### Key features
 The main Python scripts which constitute the Harmonization tool are stored in the repository’s [script](https://github.com/openmapsforeurope2/data-model-transformer/tree/main/script) folder:
 - **transform.py** is the “orchestrator” or main script: it is launched when the tool is run, then successively calls the following three scripts.
 - **extract.py** extracts the relevant data from the source database according to the JSON configuration file. Only the necessary tables and fields are extracted, and only the necessary objects if selection queries are specified in the configuration file. If necessary, geometries are projected into the coordinate reference system used for the production of the HVLSP (ETRS89 Lambert Azimuthal Area – EPSG:3035) using PostgreSQL functions. The extracted data is stored in temporary json files. 
@@ -81,6 +81,6 @@ The main Python scripts which constitute the Harmonization tool are stored in th
 </p>
 - **restore.py** runs the dump files created with the previous script in the target HVLSP database. As a result, the transform data is directly integrated with the right structure in the target tables.
 
-### 2.3. Output
+### Output
 As a result, the transformed data is directly integrated into the central HVLSP database. According to options chosen by the user, it can either replace or enrich the data already contained in the database for the processed country and theme.
 The Harmonization tool needs to be run for each country and each theme separately to fill the database.
