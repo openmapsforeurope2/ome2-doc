@@ -7,4 +7,4 @@
 * [au\_merging](docs/au_merging.md)
 * [net\_matching](docs/net_matching.md)
 * [net\_area\_matching](docs/net_area_matching.md)
-
+* [net\_point\_matching](docs/net_point_matching.md)
