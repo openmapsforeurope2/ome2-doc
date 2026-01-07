@@ -1,0 +1,37 @@
+name: Sync data-model-transformer Developer Guide
+
+on:
+  schedule:
+    - cron: '0 16 * * *' # Runs every day at 16:00 UTC
+  workflow_dispatch:
+
+jobs:
+  sync-md-file:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout ome2-doc repository
+        uses: actions/checkout@v4
+        with:
+          repository: openmapsforeurope2/ome2-doc
+          token: ${{ secrets.OME2_DOC_PUSH_TOKEN }}
+          path: ome2-doc
+
+      - name: Checkout data-model-transformer repository
+        uses: actions/checkout@v4
+        with:
+          repository: openmapsforeurope2/data-model-transformer
+          token: ${{ secrets.OME2_DOC_PUSH_TOKEN }}
+          path: data-model-transformer
+
+      - name: Copy and overwrite MD file
+        run: |
+          cp data-model-transformer/docs/developer-guide-en.md ome2-doc/technical_guide/docs/data-model-transformer.md
+
+      - name: Commit and push changes
+        run: |
+          cd ome2-doc
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add technical_guide/docs/data-model-transformer.md
+          git diff --cached --quiet || git commit -m "Sync data-model-transformer documentation from data-model-transformer/docs/developer-guide-en.md"
+          git push
