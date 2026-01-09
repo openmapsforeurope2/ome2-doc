@@ -4,7 +4,7 @@
 
 ## Description
 
-The data-tools utility tools based on SQL scripts to manage the central OME2 database.
+The data-tools repository contains utility tools based on SQL scripts to manage the central OME2 database.
 
 The tools provided are as follows:
 
