@@ -7,9 +7,9 @@ National producers can either provide:
 This data needs to be converted to the OME2 data model and integrated in the central database, using the [model conversion tool](https://github.com/openmapsforeurope2/data-model-transformer).
 The model conversion tool needs one JSON configuration file per theme to run the transformation. Explanations on the implementation of the configuration files and on how to run the tool are available in its [documentation](https://github.com/openmapsforeurope2/data-model-transformer).
 
-### Implementation of the configuration files
+### 1. Implementation of the configuration files
 
-#### 1. General parameters
+#### 1.1. General parameters
 The first step consists in filling the general parameters of the transformation:
 ```
     "country_code": "fi",
@@ -34,3 +34,22 @@ If the query does not work, it is possible to open the table in QGIS and check w
     "target_srid": "3035",
     "target_country_field": "country",
 ```
+#### 1.2. 
+
+#### 1.3. 
+
+### 2. Running the model conversion
+The model conversion tool (data-model-transformer) should be run from the ECRM production platform.
+
+- Log in to the ECRM production platform (Jenkins interface).
+- Go to Harmonization > Model conversion > "Lancer un build avec des paramètres":
+
+  <img width="329" height="386" alt="image" src="https://github.com/user-attachments/assets/625deb29-563d-40be-88f4-2546b761e317" />
+
+- Fill in the required parameters:
+<img width="1328" height="792" alt="image" src="https://github.com/user-attachments/assets/a65a412d-31b3-4931-8dd0-c87dce1b8219" />
+- Run the transformation.
+
+The transformed data will be added to the database specified in the parameters.
+
+TO-DO: describe options
