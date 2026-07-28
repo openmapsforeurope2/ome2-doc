@@ -19,23 +19,25 @@ At the end of these 3 steps, the production of the AU theme for the new country 
 - The country's national data has been converted to the OME2 data model and integrated in the central database.
 - Technical international boundaries have been set up with the neigbouring countries.
 
-## Step 1: edge-match administrative units at the lowest level
-This step needs to be performed on each country's lowest administrative level. The table below indicates, for each country, the lowest administrative level provided. The distance column indicates which distance is used to extract administrative units along boundaries (see below).
+## Parameters table
 
-| country_code | country                        | distance | lowest_level | 
-|--------------|--------------------------------|----------|--------------|
-| ad           | Andorra                        | 1000     | 1            |
-| at           | Austria                        | 1000     | 5            |
-| be           | Belgium                        | 1000     | 5            |
-| ch           | Switzerland                    | 1000     | 4            |
-| cz           | Czech Republic                 | 1000     | 4            |
-| dk           | Denmark                        | 1000     | 3            |
-| es           | Spain                          | 1000     | 4            |
-| fi           | Finland                        | 1000     | 5            |
-| fr           | France                         | 1000     | 6            |
-| li           | Liechtenstein                  | 1000     | 2            |
-| lu           | Luxembourg                     | 1000     | 3            |
-| nl           | The Netherlands                | 1000     | 3            |
+| country_code | country                        | distance | lowest_level | source for level 5 | source for level 4 | source for level 3 | source for level 2 | source for level 1 |
+|--------------|--------------------------------|----------|--------------|--------------------|--------------------|--------------------|--------------------|--------------------|
+| ad           | Andorra                        | 1000     | 1            |                    |                    |                    |                    |                    |
+| at           | Austria                        | 1000     | 5            |                    |                    |                    |                    |                    |
+| be           | Belgium                        | 1000     | 5            | N_A                | 5                  |                    |                    |                    |
+| ch           | Switzerland                    | 1000     | 4            |                    |                    |                    |                    |                    |
+| cz           | Czech Republic                 | 1000     | 4            |                    |                    |                    |                    |                    |
+| dk           | Denmark                        | 1000     | 3            |                    |                    |                    |                    |                    |
+| es           | Spain                          | 1000     | 4            |                    |                    |                    |                    |                    |
+| fi           | Finland                        | 1000     | 5            |                    |                    |                    |                    |                    |
+| fr           | France                         | 1000     | 6            |                    |                    |                    |                    |                    |
+| li           | Liechtenstein                  | 1000     | 2            |                    |                    |                    |                    |                    |
+| lu           | Luxembourg                     | 1000     | 3            |                    |                    |                    |                    |                    |
+| nl           | The Netherlands                | 1000     | 3            |                    |                    |                    |                    |                    |
+
+## Step 1: edge-match administrative units at the lowest level
+This step needs to be performed on each country's lowest administrative level. The table above indicates, for each country, the lowest administrative level provided. The distance column indicates which distance is used to extract administrative units along boundaries (see below).
 
 #### 1.1. Extract objects around a country's boundaries for matching
 The process is launched only on administratives units along international boundaries. It can be launched on all the country's international boundaries at once, or on a single boundary.
