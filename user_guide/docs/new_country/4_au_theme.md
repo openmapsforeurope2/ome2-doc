@@ -25,7 +25,7 @@ At the end of these 3 steps, the production of the AU theme for the new country 
 |--------------|--------------------------------|----------|--------------|--------------------|--------------------|--------------------|--------------------|--------------------|
 | ad           | Andorra                        | 1000     | 1            |                    |                    |                    |                    |                    |
 | at           | Austria                        | 1000     | 5            |                    |                    |                    |                    |                    |
-| be           | Belgium                        | 1000     | 5            | N_A                | 5                  |                    |                    |                    |
+| be           | Belgium                        | 1000     | 5            | N_A                | 5                  | 4                  | 3                  | 2                  |
 | ch           | Switzerland                    | 1000     | 4            |                    |                    |                    |                    |                    |
 | cz           | Czech Republic                 | 1000     | 4            |                    |                    |                    |                    |                    |
 | dk           | Denmark                        | 1000     | 3            |                    |                    |                    |                    |                    |
