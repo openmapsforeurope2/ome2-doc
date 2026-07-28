@@ -24,17 +24,17 @@ At the end of these 3 steps, the production of the AU theme for the new country 
 | country_code | country                        | distance | lowest_level | source for level 5 | source for level 4 | source for level 3 | source for level 2 | source for level 1 |
 |--------------|--------------------------------|----------|--------------|--------------------|--------------------|--------------------|--------------------|--------------------|
 | ad           | Andorra                        | 1000     | 1            |                    |                    |                    |                    |                    |
-| at           | Austria                        | 1000     | 5            |                    |                    |                    |                    |                    |
-| be           | Belgium                        | 1000     | 5            | N_A                | 5                  | 4                  | 3                  | 2                  |
-| ch           | Switzerland                    | 1000     | 4            |                    |                    |                    |                    |                    |
-| cz           | Czech Republic                 | 1000     | 4            |                    |                    |                    |                    |                    |
+| at           | Austria                        | 1000     | 5            | au_matching        | 5                  | 4                  | 3                  | 2                  |
+| be           | Belgium                        | 1000     | 5            | au_matching        | 5                  | 4                  | 3                  | 2                  |
+| ch           | Switzerland                    | 1000     | 4            | N_A                | au_matching        | 4                  | 4                  | 2                  |
+| cz           | Czech Republic                 | 1000     | 4            | N_A                | au_matching        | 4                  | 3                  | 2                  |
 | dk           | Denmark                        | 1000     | 3            |                    |                    |                    |                    |                    |
-| es           | Spain                          | 1000     | 4            |                    |                    |                    |                    |                    |
+| es           | Spain                          | 1000     | 4            | N_A                | au_matching        | 4                  | 3                  | 4                  |
 | fi           | Finland                        | 1000     | 5            |                    |                    |                    |                    |                    |
-| fr           | France                         | 1000     | 6            |                    |                    |                    |                    |                    |
-| li           | Liechtenstein                  | 1000     | 2            |                    |                    |                    |                    |                    |
-| lu           | Luxembourg                     | 1000     | 3            |                    |                    |                    |                    |                    |
-| nl           | The Netherlands                | 1000     | 3            |                    |                    |                    |                    |                    |
+| fr           | France                         | 1000     | 6            | 6                  | 6                  | 4                  | 3                  | 2                  |
+| li           | Liechtenstein                  | 1000     | 2            | N_A                | N_A                | N_A                | au_matching        | 2                  |
+| lu           | Luxembourg                     | 1000     | 3            | N_A                | N_A                | au_matching        | 3                  | 2                  |
+| nl           | The Netherlands                | 1000     | 3            | N_A                | N_A                | au_matching        | 3                  | 2                  |
 
 ## Step 1: edge-match administrative units at the lowest level
 This step needs to be performed on each country's lowest administrative level. The table above indicates, for each country, the lowest administrative level provided. The distance column indicates which distance is used to extract administrative units along boundaries (see below).
