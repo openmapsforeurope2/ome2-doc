@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>User guide for the production of network data types</title>
+  <link rel="stylesheet" href="/assets/styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="">OME2 Documentation</a>
+
+    <!-- top navigation (kept for small screens) -->
+    <nav class="site-nav" aria-label="Main navigation">
+      <ul>
+        
+        <li><a href="/ome2-doc">Home</a></li>
+        
+        <li><a href="/docs/getting-started/">Getting started</a></li>
+        
+        <li><a href="/docs/reference/">Reference</a></li>
+        
+        <li><a href="/docs/api/">API</a></li>
+        
+        <li><a href="/contribute/">Contribute</a></li>
+        
+        <li><a href="/ome2-doc/docs/user_guide.md">User guide</a></li>
+        
+      </ul>
+    </nav>
+  </header>
+
+  <div class="page-wrap">
+    <aside class="sidebar" role="complementary" aria-label="Sidebar navigation">
+      <nav class="sidebar-nav">
+  <ul>
+    
+      
+      
+      
+      <li class="">
+        <a href="/ome2-doc">Home</a>
+      </li>
+    
+      
+      
+      
+      <li class="">
+        <a href="/docs/getting-started/">Getting started</a>
+      </li>
+    
+      
+      
+      
+      <li class="">
+        <a href="/docs/reference/">Reference</a>
+      </li>
+    
+      
+      
+      
+      <li class="">
+        <a href="/docs/api/">API</a>
+      </li>
+    
+      
+      
+      
+      <li class="">
+        <a href="/contribute/">Contribute</a>
+      </li>
+    
+      
+      
+      
+      <li class="">
+        <a href="/ome2-doc/docs/user_guide.md">User guide</a>
+      </li>
+    
+  </ul>
+</nav>
+
+    </aside>
+
+    <main class="content" role="main">
+      <article class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">User guide for the production of network data types</h1>
+  </header>
+
+  <div class="post-content">
+    <h1 id="user-guide-for-the-production-of-network-data-types">User guide for the production of network data types</h1>
+
+<h2 id="cleaning">Cleaning</h2>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ cd path/to/data-tools/
+$ python3 clean.py -c path/to/conf.json -b fr -T tn -t road_link es
+</code></pre></div></div>
+
+<h2 id="matching">Matching</h2>
+<h3 id="data-preparation">Data preparation</h3>
+
+<p>Prepare tn theme classes (road_link, railway_link) working tables :</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ python3 script/prepare_data.py -c config/conf.json -T tn -s 20250908 -m es fr
+</code></pre></div></div>
+
+<p>The resulting tables are named as follow:</p>
+<ul>
+  <li>
+    <working_schema>.road_link_w_es_fr_20250908
+</working_schema>
+  </li>
+  <li>
+    <working_schema>.railway_link_w_es_fr_20250908
+
+</working_schema>
+  </li>
+</ul>
+<h3 id="matching-processing">Matching Processing</h3>
+
+<p>Build docker image:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ cd path/to/net_matching/
+$ git pull
+$ git checkout release/v&lt;version&gt;
+$ cd docker
+$ ./build-docker-image.sh
+</code></pre></div></div>
+
+<p>Run docker container:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ docker run -it net_matching:&lt;version&gt; bash
+</code></pre></div></div>
+
+<p>Set the configuration files:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&amp; nano config/tn_theme_parameters.ini
+&amp; nano config/ra_theme_parameters.ini
+</code></pre></div></div>
+
+<ul>
+  <li>check if the parameter DB_CONF_FILE is pointing to the right db configuration file</li>
+  <li>set the parameter EDGE_TABLE_INIT (road_link_w_es_fr_20250908, railway_link_w_es_fr_20250908)</li>
+  <li>add configuration section for the border to treat if it doesn’t exist:
+Add the following lines in the configuration files:
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[es#fr]
+COUNTRY_CODE_W  =es#fr
+</code></pre></div>    </div>
+    <p>If other parameters have to be specialized for this border they must be specified in this section.</p>
+  </li>
+</ul>
+
+<p>Launch matching process:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ ./bin/net_matching --c /usr/local/src/net_matching/config/epg_parameters.ini --T tn --cc es#fr
+$ ./bin/net_matching --c /usr/local/src/net_matching/config/epg_parameters.ini --T ra --cc es#fr
+</code></pre></div></div>
+
+<h3 id="validation-preparation">Validation preparation</h3>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ cd path/to/data-tools/
+$ python3 ./script/prepare_data.py -c path/to/conf.json -T tn -s 20250908 -w es fr
+</code></pre></div></div>
+<p>These command prepare all theme classes for validation. An option -t can be added to prepare data of a single classe (ex: -t road_link)</p>
+
+<h3 id="manual-correction">Manual Correction</h3>
+
+<h3 id="integration-of-matched-data-in-production-tables">Integration of matched data in production tables</h3>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ cd path/to/data-tools/
+$ python3 ./script/integrate_from_validation.py -c path/to/conf.json -T tn es fr
+</code></pre></div></div>
+<p>These command integrate data of all theme classes. An option -t can be added to integrate data of a specific class (ex: -t road_link)</p>
+
+  </div>
+
+</article>
+
+    </main>
+  </div>
+
+  <footer class="site-footer">
+    <p>&copy; 2025 OpenMapsForEurope</p>
+  </footer>
+</body>
+</html>

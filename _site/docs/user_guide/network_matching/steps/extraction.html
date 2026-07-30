@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>OME2 Documentation</title>
+  <link rel="stylesheet" href="/assets/styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="">OME2 Documentation</a>
+
+    <!-- top navigation (kept for small screens) -->
+    <nav class="site-nav" aria-label="Main navigation">
+      <ul>
+        
+        <li><a href="/ome2-doc">Home</a></li>
+        
+        <li><a href="/docs/getting-started/">Getting started</a></li>
+        
+        <li><a href="/docs/reference/">Reference</a></li>
+        
+        <li><a href="/docs/api/">API</a></li>
+        
+        <li><a href="/contribute/">Contribute</a></li>
+        
+        <li><a href="/ome2-doc/docs/user_guide.md">User guide</a></li>
+        
+      </ul>
+    </nav>
+  </header>
+
+  <div class="page-wrap">
+    <aside class="sidebar" role="complementary" aria-label="Sidebar navigation">
+      <nav class="sidebar-nav">
+  <ul>
+    
+      
+      
+      
+      <li class="">
+        <a href="/ome2-doc">Home</a>
+      </li>
+    
+      
+      
+      
+      <li class="">
+        <a href="/docs/getting-started/">Getting started</a>
+      </li>
+    
+      
+      
+      
+      <li class="">
+        <a href="/docs/reference/">Reference</a>
+      </li>
+    
+      
+      
+      
+      <li class="">
+        <a href="/docs/api/">API</a>
+      </li>
+    
+      
+      
+      
+      <li class="">
+        <a href="/contribute/">Contribute</a>
+      </li>
+    
+      
+      
+      
+      <li class="">
+        <a href="/ome2-doc/docs/user_guide.md">User guide</a>
+      </li>
+    
+  </ul>
+</nav>
+
+    </aside>
+
+    <main class="content" role="main">
+      <article class="post">
+
+  <header class="post-header">
+    <h1 class="post-title"></h1>
+  </header>
+
+  <div class="post-content">
+    <p>/!\ TO BE DELETED</p>
+
+<h1 id="extraction">extraction</h1>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>python3 border_extract.py -c conf.json -T &lt;theme&gt; -t &lt;net_type&gt; -d &lt;distance&gt; &lt;country_code&gt; '#'
+</code></pre></div></div>
+<h2 id="extract-parameters-for-clean">Extract parameters for clean</h2>
+<p><br /></p>
+
+<p>Below are the distance parameters used to extract data for cleaning (i.e. deleting data out of the country’s extent).</p>
+
+<p><strong>net_type = road_link, theme = tn</strong>
+| country                        | country_code | distance | 
+|——————————–|————–|———-|
+| The Netherlands                | nl           | 4000     |
+| Belgium                        | be           | 4000     |
+| France                         | fr           | 3000     |
+| Suisse                         | ch           | 4000     |
+| Luxembourg                     | lu           | 4000     |</p>
+
+<p><br /></p>
+
+<p><strong>net_type = railway_link, theme = tn</strong>
+| country                        | country_code | distance |
+|——————————–|————–|———-|
+| The Netherlands                | nl           | 4000     |
+| Belgium                        | be           | 4000     |
+| France                         | fr           | 4000     |
+| Suisse                         | ch           | 4000     |
+| Luxembourg                     | lu           | 4000     |</p>
+
+<p><br /></p>
+
+<p><strong>net_type = watercourse_link, theme = hy</strong>
+| country                        | country_code | distance |
+|——————————–|————–|———-|
+| The Netherlands                | nl           | 4000     |
+| Belgium                        | be           | 4000     |
+| France                         | fr           | 3000     |
+| Suisse                         | ch           | 4000     |
+| Luxembourg                     | lu           | 4000     |</p>
+
+<p><br /></p>
+
+<p><u>France:</u></p>
+
+<p>ATTENTION!
+voir si pour avoir les zone “in dispute”, plutot</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&lt;theme&gt; -t &lt;net_type&gt; -B international -d &lt;distance&gt; fr
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>python3 script/border_extract.py -c conf.json -T &lt;theme&gt; -t &lt;net_type&gt; -b false -B international -d &lt;distance&gt; fr
+python3 script/border_extract.py -c conf.json -T &lt;theme&gt; -t &lt;net_type&gt; -b ad -d &lt;distance&gt; -n fr
+python3 script/border_extract.py -c conf.json -T &lt;theme&gt; -t &lt;net_type&gt; -b mc -d &lt;distance&gt; -n fr
+python3 script/border_extract.py -c conf.json -T &lt;theme&gt; -t &lt;net_type&gt; -b lu -d &lt;distance&gt; -n fr
+python3 script/border_extract.py -c conf.json -T &lt;theme&gt; -t &lt;net_type&gt; -b it -d &lt;distance&gt; -n fr
+python3 script/border_extract.py -c conf.json -T &lt;theme&gt; -t &lt;net_type&gt; -b es -d &lt;distance&gt; -n fr
+python3 script/border_extract.py -c conf.json -T &lt;theme&gt; -t &lt;net_type&gt; -b ch -d &lt;distance&gt; -n fr
+python3 script/border_extract.py -c conf.json -T &lt;theme&gt; -t &lt;net_type&gt; -b de -d &lt;distance&gt; -n fr
+python3 script/border_extract.py -c conf.json -T &lt;theme&gt; -t &lt;net_type&gt; -b be -d &lt;distance&gt; -n fr
+</code></pre></div></div>
+
+<h2 id="extract-parameters-for-edge-matching">Extract parameters for edge-matching</h2>
+<p><br /></p>
+
+<p>Below are the distance parameters used to extract data for edge-matching between two countries.</p>
+
+<p>TO-DO</p>
+
+  </div>
+
+</article>
+
+    </main>
+  </div>
+
+  <footer class="site-footer">
+    <p>&copy; 2025 OpenMapsForEurope</p>
+  </footer>
+</body>
+</html>

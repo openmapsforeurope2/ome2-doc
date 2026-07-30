@@ -1,0 +1,447 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Description du processus pour l’intégration de nouvelles données de type réseau</title>
+  <link rel="stylesheet" href="/assets/styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="">OME2 Documentation</a>
+
+    <!-- top navigation (kept for small screens) -->
+    <nav class="site-nav" aria-label="Main navigation">
+      <ul>
+        
+        <li><a href="/ome2-doc">Home</a></li>
+        
+        <li><a href="/docs/getting-started/">Getting started</a></li>
+        
+        <li><a href="/docs/reference/">Reference</a></li>
+        
+        <li><a href="/docs/api/">API</a></li>
+        
+        <li><a href="/contribute/">Contribute</a></li>
+        
+        <li><a href="/ome2-doc/docs/user_guide.md">User guide</a></li>
+        
+      </ul>
+    </nav>
+  </header>
+
+  <div class="page-wrap">
+    <aside class="sidebar" role="complementary" aria-label="Sidebar navigation">
+      <nav class="sidebar-nav">
+  <ul>
+    
+      
+      
+      
+      <li class="">
+        <a href="/ome2-doc">Home</a>
+      </li>
+    
+      
+      
+      
+      <li class="">
+        <a href="/docs/getting-started/">Getting started</a>
+      </li>
+    
+      
+      
+      
+      <li class="">
+        <a href="/docs/reference/">Reference</a>
+      </li>
+    
+      
+      
+      
+      <li class="">
+        <a href="/docs/api/">API</a>
+      </li>
+    
+      
+      
+      
+      <li class="">
+        <a href="/contribute/">Contribute</a>
+      </li>
+    
+      
+      
+      
+      <li class="">
+        <a href="/ome2-doc/docs/user_guide.md">User guide</a>
+      </li>
+    
+  </ul>
+</nav>
+
+    </aside>
+
+    <main class="content" role="main">
+      <article class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">Description du processus pour l’intégration de nouvelles données de type réseau</h1>
+  </header>
+
+  <div class="post-content">
+    <h1 id="description-du-processus-pour-lintégration-de-nouvelles-données-de-type-réseau">Description du processus pour l’intégration de nouvelles données de type réseau</h1>
+
+<h1 id="introduction">Introduction</h1>
+
+<p>Ce document a pour objectif de décrire de manière macroscopique le processus d’intégration des données d’un pays dans la base de données OME2 que ce soit pour une initialisation (première intégration) ou une mise à jour.</p>
+
+<p>Le processus d’écrit ici est spécifique aux données de type réseau qui sont constituées d’objets de type géométrique linéaire formant une structure topologique cohérente.
+Dans le cadre du projet OME2 les jeux de données répondant à cette définition sont les suivants:</p>
+<ul>
+  <li>le réseau routier : table <em>road_link</em> du thème transport (tn)</li>
+  <li>le réseau ferré : table <em>railway_link</em> du thème transport (tn)</li>
+  <li>le réseau hydrographique : table <em>watercourse_link</em> du thème hydrographie (hy)</li>
+</ul>
+
+<h1 id="description-du-processus">Description du processus</h1>
+
+<p>Le schéma ci-après détail le processus complet d’intégration des données d’un pays dans la base OME2.
+Quel que soit le format de livraison adopté par le producteur de données, celles-ci sont injectées dans une base de données PostGIS. C’est cette base de données qui constitue la donnée source du processus.</p>
+
+<p><img src="/docs/images/schema_update_for_doc_without_title.png" alt="schema_update_for_doc_without_title" /></p>
+
+<h2 id="déroulement-du-processus">Déroulement du processus</h2>
+
+<p>Pour décrire le déroulement du processus on se place dans le cas de l’intégration des données de la classe *<net_type>* du pays *<ome2land>* dont le code pays est **om**.
+La classe de données *<net_type>* appartient au thème *<theme>* qui à pour code **th**.
+Le pays *<ome2land>* possède un voisin *<ome2neighbor>* dont le code pays est **nb**.</ome2neighbor></ome2land></theme></net_type></ome2land></net_type></p>
+
+<h3 id="etape-1--conversion-de-modèle">Etape 1 : conversion de modèle</h3>
+
+<p>Cette étape consiste à convertir les données depuis leur modèle national d’origine vers le modèle OME2.
+Dans le cas d’une première intégration des donnés du pays *<ome2land>*, l'opérateur chargé de la réalisation de cette étape devra écrire l'ensemble des fichiers de configuration décrivant les opérations de conversion pour chaque champ.
+Dans le cas d'une mise à jour l'opérateur devra s'assurer que le modèle national n'a pas évolué depuis la dernière intégration. Si le modèle a subi des modifications, les fichiers de configuration devront être adaptés en conséquence.
+Les fichiers de configuration constituent le coeur du moteur de conversion.
+La table cible est la table de mise à jour *<net_type>_up*.
+Préalablement à la conversion des données, si la table *<net_type>_up* n'existe pas elle est créée, sinon tous les objets du pays *<ome2land>* (avec le code 'om') sont supprimés.</ome2land></net_type></net_type></ome2land></p>
+
+<h4 id="outil-utilisé">outil utilisé</h4>
+
+<p><a href="https://github.com/openmapsforeurope2/data-model-transformer">data-model-transformer</a></p>
+
+<h4 id="configuration">configuration</h4>
+<p>Le fichier de configuration conf.json doit être renseigné en indiquant les paramètres de connexion aux bases source et cible, ainsi que les codes du pays et du thème traités.
+Le fichier se présente sous la forme suivante:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>{
+    "country":"om",
+    "theme":"th",
+    "output":"",
+    "source_db":{
+        "host":"",
+        "port":"",
+        "name":"",
+        "user":"",
+        "pwd":"",
+        "schema": ""
+    },
+    "target_db":{
+        "host":"",
+        "port":"",
+        "name":"",
+        "user":"",
+        "pwd":"",
+        "schema": ""
+    }
+}
+</code></pre></div></div>
+
+<h4 id="commande">commande</h4>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>python3 transform.py -c conf.json
+</code></pre></div></div>
+
+<h3 id="etapes-2-3-et-4--nettoyage-de-données">Etapes 2, 3 et 4 : nettoyage de données</h3>
+
+<p>On procéde ici au nettoyage des données dans la table de mise à jour.
+Cela consiste à supprimer les objets situés à l’extérieur de leur pays et dont la distance à la frontière dépasse un certain seuil.</p>
+
+<p>Cette phase du processus se déroule en trois étapes :</p>
+<ul>
+  <li>étape 2) extraction dans la table de travail *<net_type>_w* des données situées autour de toutes les frontières du pays *<ome2land>*</ome2land></net_type></li>
+  <li>étape 3) nettoyage des données dans la table de travail.</li>
+  <li>étape 4) intégration des modifications dans la table de mise à jour *<net_type>_up*</net_type></li>
+</ul>
+
+<h4 id="outil-utilisé-1">outil utilisé</h4>
+
+<p><a href="https://github.com/openmapsforeurope2/data-tools">data-tools</a></p>
+
+<h4 id="configuration-1">configuration</h4>
+
+<p>Dans le fichier db_conf.json doivent être renseignés les paramètres de connexion à la base de donnée OME2.
+<br />
+Dans le fichier conf.json il faut veiller à ce que les différents schémas soient en cohérence avec la structure de la base OME2.
+Voici, par exemple, à quoi peut ressembler la configuration des schémas pour le thème <theme></theme></p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>{
+    ...
+    "data": {
+        ...
+        "themes": {
+            "th": {
+                "schema": "prod",
+                "h_schema": "prod",
+                "w_schema": "work",
+                "u_schema": "work",
+                "r_schema": "ref",
+                "tables": [
+                    "road_link",
+                    ...
+</code></pre></div></div>
+
+<h4 id="commandes">commandes</h4>
+
+<p>Voici l’enchainement des trois commandes qui constituent la phase de nettoyage:</p>
+
+<ul>
+  <li>étape 2)
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>python3 border_extract.py -c conf.json -T th -t &lt;net_type&gt; -d 4000 om '#'
+</code></pre></div>    </div>
+  </li>
+  <li>étape 3)
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>python3 clean.py -c conf.json -d 5 -T th -t &lt;net_type&gt; om
+</code></pre></div>    </div>
+  </li>
+  <li>étape 4)
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>python3 integrate.py -c conf.json -T th -t &lt;net_type&gt; -s 10
+</code></pre></div>    </div>
+  </li>
+</ul>
+
+<h3 id="etape-5--détection-de-changements">Etape 5 : détection de changements</h3>
+
+<p>Cette étape, à lancer dans le cas d’une mise à jour, permet de calculer les différences sémantiques et géométriques entre deux versions d’un même jeu de données.
+Les deux tables à comparer sont :</p>
+<ul>
+  <li>*<net_type>_ref* : la table de référence dans laquelle est stockée la dernière version du jeux de données qui a été intégré.</net_type></li>
+  <li>*<net_type>_up* : la table de mise à jour contenant la nouvelle version du jeux de données que l'on souhaite intégrer.</net_type></li>
+</ul>
+
+<p>Toutes les différences (suppressions, ajouts et modifications) sont enregistrées dans la table *<net_type>_cd*.
+Préalablement au calcul du différentiel, si la table *<net_type>_cd* n'existe pas, elle est créée, sinon tous les enregistrements du pays *<ome2land>* (avec le code 'om') sont supprimés.</ome2land></net_type></net_type></p>
+
+<p>Parmi les informations contenue dans la table résultat, on trouve:</p>
+<ul>
+  <li>l’identifiant dans la table de référence</li>
+  <li>l’identifiant dans la table de mise à jour</li>
+  <li>un indicateur mentionnant si la différence est de nature géométrique</li>
+  <li>un indicateur mentionnant si la différence est de nature sémantique</li>
+  <li>un indicateur mentionnant si la différence est de nature sémantique et impactante pour le processus de raccordement aux frontières à venir</li>
+</ul>
+
+<h4 id="outil-utilisé-2">outil utilisé</h4>
+
+<p><a href="https://github.com/openmapsforeurope2/change_detection">change_detection</a></p>
+
+<h4 id="configuration-2">configuration</h4>
+
+<p>Dans le fichier db_conf.ini doivent être renseignés les paramètres de connexion à la base de donnée OME2.
+<br />
+Dans le fichier theme_parameters.ini, on a parmi les paramètres de configuration notables :</p>
+<ul>
+  <li>un seuil de détection d’une modification géométrique</li>
+  <li>la taille des dalles (le calcul de détection de changements est réalisé selon une tesselation)</li>
+  <li>la liste des champs à ignorer pour la détection de changements sémantiques</li>
+  <li>la liste des champs impactants le processus de raccordement aux frontières</li>
+</ul>
+
+<h4 id="commande-1">commande</h4>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>change_detection --c epg_parameters.ini --op diff --T th --f &lt;net_type&gt; --cc om
+</code></pre></div></div>
+
+<h3 id="etapes-6--création-des-zones-de-mise-à-jour">Etapes 6 : création des zones de mise à jour</h3>
+
+<p>Les zones de mise à jour sont créés dans la table *<net_type>_up_area* par concaténation de buffers réalisés autour des objets proches de la frontière ajoutés, supprimés ou ayant subi une modification géométrique ou une modification sémantique impactant le processus de raccordement.
+Préalablement à la création des zones de mise à jour, si la table *<net_type>_up_area* n'existe pas elle est créée, sinon tous les objets du pays *<ome2land>* (avec le code 'om') sont supprimés.</ome2land></net_type></net_type></p>
+
+<h4 id="outil-utilisé-3">outil utilisé</h4>
+
+<p><a href="https://github.com/openmapsforeurope2/up_area_tools">up_area_tools</a></p>
+
+<h4 id="configuration-3">configuration</h4>
+
+<p>Dans le fichier db_conf.ini doivent être renseignés les paramètres de connexion à la base de donnée OME2.
+<br />
+Le fichier theme_parameters.ini, permet de réaliser les paramétrages suivants :</p>
+<ul>
+  <li>distance seuil permettant de sélectionner les objets proches de la frontière</li>
+  <li>rayon du buffer réalisé autour d’un objet mis à jour</li>
+</ul>
+
+<h4 id="commande-2">commande</h4>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>up_area_tools --c epg_parameters.ini --op create --T th --f &lt;net_type&gt; --cc om
+</code></pre></div></div>
+
+<h3 id="etapes-7-8-9-10-et-11--substitution-des-objets-dans-les-zones-de-mise-à-jour">Etapes 7, 8, 9, 10 et 11 : substitution des objets dans les zones de mise à jour</h3>
+
+<p>Dans le contexte d’une mise à jour, l’objectif est ici de supprimer, dans les zones de mise à jour, les données du pays *<ome2land>* qui ont été précédemment raccordées, puis d'injecter dans ces mêmes zones les données issues du nouveau jeu de données.</ome2land></p>
+
+<p>Cette phase du processus se déroule en cinq étapes :</p>
+<ul>
+  <li>étape 7) extraction depuis la table de production dans la table de travail *<net_type>_w* des données du pays *<ome2land>* situées dans les zones de mise à jour.</ome2land></net_type></li>
+  <li>étape 8) suppression dans les zones de mise à jour des objets et des informations attributaires du pays *<ome2land>*</ome2land></li>
+  <li>étape 9) extraction depuis la table de référence (jeu de données antérieur avant raccordement) dans la table de travail *<net_type>_w* des données du pays *<ome2land>* situées dans les zones de mise à jour.</ome2land></net_type></li>
+  <li>étape 10) intégration des modifications dans la table de production (suppression des données raccordées et injection des données de référence dans les zones de mise à jour)</li>
+  <li>étape 11) application du différentiel sur la table de production afin de substituer, dans les zone de mise à jour, les données de mise à jour aux données de référence.</li>
+</ul>
+
+<h4 id="outils-utilisés">outils utilisés</h4>
+
+<p><a href="https://github.com/openmapsforeurope2/up_area_tools">up_area_tools</a>
+<br />
+<a href="https://github.com/openmapsforeurope2/unmatching">unmatching</a>
+<br />
+<a href="https://github.com/openmapsforeurope2/data-tools">data-tools</a>
+<br />
+<a href="https://github.com/openmapsforeurope2/change_detection">change_detection</a></p>
+
+<h4 id="configuration-4">configuration</h4>
+
+<p>Pour l’outil <em>data-tools</em>, dans le fichier db_conf.json doivent être renseignés les paramètres de connexion à la base de donnée OME2. Pour les autres outils il s’agit du fichier db_conf.ini.
+<br />
+Autres éléments de configuration notables :</p>
+<ul>
+  <li>dans le fichier theme_parameters.ini de l’outil <em>up_area_tools</em>, il est possible de définir la taille des dalles utilisées pour l’extraction afin d’optimiser la gestion de la mémoire.</li>
+  <li>dans le fichier theme_parameters.ini de l’outil <em>unmatching</em>, il faut spécifier les champs qui ne sont pas concaténés lors d’une fusion réalisée au cours du processus de raccordement.</li>
+</ul>
+
+<h4 id="commandes-1">commandes</h4>
+
+<p>Voici l’enchainement des cinq commandes qui constituent cette phase du processus :</p>
+
+<ul>
+  <li>étape 7)
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>up_area_tools --c epg_parameters.ini --op extract --T th --f &lt;net_type&gt; --cc om
+</code></pre></div>    </div>
+  </li>
+  <li>étape 8)
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>unmatching --c epg_parameters.ini --cc om
+</code></pre></div>    </div>
+  </li>
+  <li>étape 9)
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>up_area_tools --c epg_parameters.ini --op extract --from_up --without_ids --T th --f &lt;net_type&gt; --cc om
+</code></pre></div>    </div>
+  </li>
+  <li>étape 10)
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>python3 integrate.py -c conf.json -T th -t &lt;net_type&gt; -s 10
+</code></pre></div>    </div>
+  </li>
+  <li>étape 11)
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>change_detection --c epg_parameters.ini -- op apply_diff --T th --f &lt;net_type&gt; --ref prod --cc om
+</code></pre></div>    </div>
+  </li>
+</ul>
+
+<h3 id="etapes-12-13-14--processus-de-raccordement-des-objets-frontaliers">Etapes 12, 13, 14 : processus de raccordement des objets frontaliers</h3>
+
+<p>Le processus de raccordement est lancé itérativement, frontière par frontière (une frontière est composée de l’ensemble des géométries linéaires constituant la séparation entre deux pays frontaliers). On va donc traiter successivement les frontières du pays *<ome2land>* le séparant de l'ensemble de ses pays voisins.</ome2land></p>
+
+<p>Le traitement est réalisé en trois étapes:</p>
+<ul>
+  <li>étape 12) extraction des données autour de la frontière à traiter depuis la table de production</li>
+  <li>étape 13) raccordement transfrontalier</li>
+  <li>étape 14) intégration des modifications dans le table de production</li>
+</ul>
+
+<p>Le processus de mise à jour différe du processus de constitution initiale. En effet, dans le cas d’une mise à jour, on ne va extraire à l’étape 12) que les données situées dans les zones de mise à jour. Ensuite l’étape 13) sera séquencée en trois sous-étape : on lance la première partie du processus de raccordement sur les données situées dans les zones de mise à jour, ensuite on extrait de la table de production le reste des données frontalières pour enfin lancer la seconde partie du processus de raccordement (cette deuxième phase réalise des nettoyages basés sur des calculs de chemins qui nécessitent d’avoir l’ensemble du réseau).
+<br />
+<a href="https://github.com/openmapsforeurope2/data-tools">data-tools</a>
+<br />
+<a href="https://github.com/openmapsforeurope2/net_matching">net_matching</a></p>
+
+<h4 id="configuration-5">configuration</h4>
+
+<p>Pour l’outil <em>data-tools</em>, dans le fichier db_conf.json doivent être renseignés les paramètres de connexion à la base de donnée OME2. Pour les autres outils il s’agit du fichier db_conf.ini.
+<br />
+l’outil <em>up_area_tools</em> possède un fichier de configuration theme_parameters.ini dans lequel il est possible de définir la taille des dalles utilisées pour l’extraction à des fins d’optimisation de l’utilisation de la mémoire.
+<br />
+L’outil <em>net_matching</em> possède un fichier de configuration par type de réseau (road_link, railway, watercourse_link). Chacun de ces fichiers possède de nombreux paramètres permettant de configurer les algorithmes de raccordement. Ces paramètres peuvent être ajustés en fonction des spécificités de chaque pays.</p>
+
+<h4 id="commandes-2">commandes</h4>
+
+<p>Voici l’ensemble des commandes à lancer dans le cas d’une initialisation :</p>
+
+<ul>
+  <li>étape 12)
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>python3 border_extract.py -c conf.json -T th -t &lt;net_type&gt; -d 1000 om nb
+</code></pre></div>    </div>
+  </li>
+  <li>étape 13)
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>tn_matching --c epg_parameters.ini --T th --cc nb#om
+</code></pre></div>    </div>
+  </li>
+  <li>étape 14)
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>python3 integrate.py -c conf.json -T th -t &lt;net_type&gt; -s 20
+</code></pre></div>    </div>
+  </li>
+</ul>
+
+<p>Lors d’une mise à jour, les commandes à lancer seront les suivantes :</p>
+
+<ul>
+  <li>étape 12)
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>up_area_tools --c epg_parameters.ini --op extract --T th --f &lt;net_type&gt; --cc om --ncc nb
+</code></pre></div>    </div>
+  </li>
+  <li>étape 13)
+    <ul>
+      <li>a)
+        <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  tn_matching --c epg_parameters.ini --T th --cc nb#om --sp 201-255
+</code></pre></div>        </div>
+      </li>
+      <li>b)
+        <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  python3 border_extract.py -c conf.json -T th -t &lt;net_type&gt; -d 1000 om nb
+</code></pre></div>        </div>
+      </li>
+      <li>c)
+        <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  tn_matching --c epg_parameters.ini --T th --cc nb#om --sp 260-280
+</code></pre></div>        </div>
+      </li>
+    </ul>
+  </li>
+  <li>étape 14)
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>python3 integrate.py -c conf.json -T tn -t &lt;net_type&gt; -s 20
+</code></pre></div>    </div>
+  </li>
+</ul>
+
+<h3 id="etape-15--mise-à-jour-de-la-table-de-référence">Etape 15 : mise à jour de la table de référence</h3>
+
+<p>Dans le contexte d’une mise à jour, à l’issu du processus, il faut appliquer le différentiel sur la table de référence afin quelle reflète l’état initial des dernières données injectées du pays traité. Ainsi cette table pourra servir de base pour le calcul du différentiel lors de la prochaine mise à jour.
+<br />
+Dans le contexte d’une constitution initiale, les données de la table de mise à jour sont simplement copiées dans la table de référence.</p>
+
+<h4 id="outils-utilisés-1">outils utilisés</h4>
+
+<p><a href="https://github.com/openmapsforeurope2/change_detection">change_detection</a></p>
+
+<h4 id="configuration-6">configuration</h4>
+
+<p>Dans le fichier db_conf.ini doivent être renseignés les paramètres de connexion à la base de donnée OME2.</p>
+
+<h4 id="commandes-3">commandes</h4>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>change_detection --c epg_parameters.ini -- op apply_diff --T th --f &lt;net_type&gt; --ref ref --cc om
+</code></pre></div></div>
+
+  </div>
+
+</article>
+
+    </main>
+  </div>
+
+  <footer class="site-footer">
+    <p>&copy; 2025 OpenMapsForEurope</p>
+  </footer>
+</body>
+</html>
